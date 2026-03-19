@@ -1,4 +1,16 @@
-# electron-fetch
+# @egoist/electron-fetch
+
+An anlternative way to get rid of CORS in Electron renderer process by exposing a `fetch` function backed by `electron.net.fetch`
+
+## Install
+
+Install as dev dependency, make sure your bundler would bundle it:
+
+```bash
+npm i @egoist/electron-fetch -D
+```
+
+## Usage
 
 In Main process:
 
