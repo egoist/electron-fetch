@@ -101,6 +101,23 @@ function App() {
     }
   }
 
+  async function handleUrlSearchParams() {
+    const output = document.getElementById("output")!
+    output.textContent = "Loading..."
+
+    try {
+      const params = new URLSearchParams({ foo: "bar", baz: "qux" })
+      const response = await fetch("http://localhost:3333/urlsearchparams", {
+        method: "POST",
+        body: params,
+      })
+      const text = await response.text()
+      output.textContent = text
+    } catch (e) {
+      output.textContent = `Error: ${e}`
+    }
+  }
+
   function handleAbort() {
     abortController.abort()
   }
@@ -115,6 +132,7 @@ function App() {
         <button onClick={handleBlob}>Blob</button>
         <button onClick={handleArrayBuffer}>ArrayBuffer</button>
         <button onClick={handleFormData}>FormData</button>
+        <button onClick={handleUrlSearchParams}>URLSearchParams</button>
         <button onClick={handleAbort}>Abort</button>
       </div>
       <pre id="output" />

@@ -35,8 +35,11 @@ export function registerElectronFetchMain() {
       ipcMain.once(abortChannel, handleAbort)
 
       try {
+        let { body, ...init } = payload.init || {}
+
         const response = await net.fetch(payload.url, {
-          ...payload.init,
+          ...init,
+          body,
           signal: controller.signal,
         })
         port1.postMessage({

@@ -3,7 +3,7 @@ export const ELECTRON_FETCH_CHANNEL_PREFIX = "electron-fetch:"
 export type InteralRequestPayload = {
   id: string
   url: string
-  init?: Omit<RequestInit, "signal">
+  init?: Omit<RequestInit, "signal"> & { signal: null }
 }
 
 export type InternalAPI = {

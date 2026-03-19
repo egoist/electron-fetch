@@ -48,6 +48,13 @@ function startSseServer() {
         ``,
       ].join("\r\n")
       res.end(body)
+    } else if (req.url === "/urlsearchparams") {
+      let body = ""
+      req.on("data", (chunk) => { body += chunk })
+      req.on("end", () => {
+        res.writeHead(200, { "Content-Type": "text/plain" })
+        res.end(body)
+      })
     } else {
       res.writeHead(404)
       res.end()

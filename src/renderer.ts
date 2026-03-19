@@ -1,12 +1,12 @@
-export async function fetch(url: string | URL, _requestInit?: RequestInit) {
+export async function fetch(url: string | URL, requestInit?: RequestInit) {
   const id = crypto.randomUUID()
-  const { signal, ...requestInit } = _requestInit || {}
+  const req = new Request(url, requestInit)
 
   const { responseInit, streamRef } = await new Promise<{
     responseInit: ResponseInit
     streamRef: ReadableStream | null
-  }>((resolve) => {
-    signal?.addEventListener(
+  }>(async (resolve) => {
+    req.signal?.addEventListener(
       "abort",
       () => {
         __electronFetchInternal.abort(id)
@@ -46,8 +46,13 @@ export async function fetch(url: string | URL, _requestInit?: RequestInit) {
 
     __electronFetchInternal.request({
       id,
-      url: url.toString(),
-      init: requestInit,
+      url: req.url,
+      init: {
+        ...req,
+        headers: [...req.headers.entries()],
+        body: await req.arrayBuffer(),
+        signal: null,
+      },
     })
   })
 
@@ -59,4 +64,14 @@ class AbortError extends Error {
     super("aborted")
     this.name = "AbortError"
   }
+}
+
+function normalizeBody(body: BodyInit | null | undefined) {
+  if (!body) return body
+
+  if (body instanceof URLSearchParams) {
+    return body.toString()
+  }
+
+  return body
 }
