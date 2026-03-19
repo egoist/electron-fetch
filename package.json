@@ -3,9 +3,22 @@
   "type": "module",
   "version": "0.0.1",
   "exports": {
-    "./renderer": "./dist/renderer.mjs",
-    "./main": "./dist/main.mjs",
-    "./preload": "./dist/preload.mjs"
+    "./renderer": {
+      "types": "./dist/renderer.d.mts",
+      "default": "./dist/renderer.mjs"
+    },
+    "./main": {
+      "types": "./dist/main.d.mts",
+      "default": "./dist/main.mjs"
+    },
+    "./preload": {
+      "types": "./dist/preload.d.mts",
+      "default": "./dist/preload.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown --dts",
+    "prepublishOnly": "bun run build"
   },
   "files": [
     "dist"
