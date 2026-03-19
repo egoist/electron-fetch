@@ -16,6 +16,7 @@ export async function fetch(url: string | URL, requestInit?: RequestInit) {
 
     const streamRef = new ReadableStream({
       start(controller) {
+        let closed = false
         __electronFetchInternal.onStream(id, (message) => {
           if (message.type === "response") {
             resolve({
@@ -29,13 +30,19 @@ export async function fetch(url: string | URL, requestInit?: RequestInit) {
           } else if (message.type === "chunk") {
             controller.enqueue(message.value)
           } else if (message.type === "error") {
-            controller.error(
-              message.error === "__aborted__"
-                ? new AbortError()
-                : message.error,
-            )
+            if (!closed) {
+              closed = true
+              controller.error(
+                message.error === "__aborted__"
+                  ? new AbortError()
+                  : message.error,
+              )
+            }
           } else if (message.type === "end") {
-            controller.close()
+            if (!closed) {
+              closed = true
+              controller.close()
+            }
           }
         })
       },
@@ -49,8 +56,9 @@ export async function fetch(url: string | URL, requestInit?: RequestInit) {
       url: req.url,
       init: {
         ...req,
+        method: req.method,
         headers: [...req.headers.entries()],
-        body: await req.arrayBuffer(),
+        body: req.body == null ? undefined : await req.arrayBuffer(),
         signal: null,
       },
     })
@@ -64,14 +72,4 @@ class AbortError extends Error {
     super("aborted")
     this.name = "AbortError"
   }
-}
-
-function normalizeBody(body: BodyInit | null | undefined) {
-  if (!body) return body
-
-  if (body instanceof URLSearchParams) {
-    return body.toString()
-  }
-
-  return body
 }

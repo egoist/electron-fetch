@@ -37,7 +37,10 @@ function App() {
     output.textContent = "Loading..."
 
     try {
-      const response = await fetch("http://localhost:3333/plaintext")
+      const response = await fetch("http://localhost:3333/plaintext", {
+        method: "POST",
+        body: "Hello, this is plain text!",
+      })
       const text = await response.text()
       output.textContent = text
     } catch (e) {
@@ -50,7 +53,10 @@ function App() {
     output.textContent = "Loading..."
 
     try {
-      const response = await fetch("http://localhost:3333/json")
+      const response = await fetch("http://localhost:3333/json", {
+        method: "POST",
+        body: JSON.stringify({ message: "Hello, JSON!", data: [1, 2, 3] }),
+      })
       const json = await response.json()
       output.textContent = JSON.stringify(json, null, 2)
     } catch (e) {
@@ -63,7 +69,11 @@ function App() {
     output.textContent = "Loading..."
 
     try {
-      const response = await fetch("http://localhost:3333/binary")
+      const data = new Uint8Array([0x00, 0x01, 0x02, 0x03, 0x04, 0x05])
+      const response = await fetch("http://localhost:3333/binary", {
+        method: "POST",
+        body: data,
+      })
       const blob = await response.blob()
       output.textContent = `Blob size: ${blob.size} bytes, type: ${blob.type}`
     } catch (e) {
@@ -76,7 +86,13 @@ function App() {
     output.textContent = "Loading..."
 
     try {
-      const response = await fetch("http://localhost:3333/binary")
+      const data = new Uint8Array([0x00, 0x01, 0x02, 0x03, 0x04, 0x05])
+
+      const response = await fetch("http://localhost:3333/binary", {
+        method: "POST",
+        body: data,
+      })
+
       const buffer = await response.arrayBuffer()
       output.textContent = `ArrayBuffer size: ${buffer.byteLength} bytes`
     } catch (e) {
@@ -89,13 +105,15 @@ function App() {
     output.textContent = "Loading..."
 
     try {
-      const response = await fetch("http://localhost:3333/formdata")
-      const formData = await response.formData()
-      const entries: string[] = []
-      formData.forEach((value, key) => {
-        entries.push(`${key}: ${value}`)
+      const form = new FormData()
+      form.append("field1", "value1")
+      form.append("field2", "value2")
+      const response = await fetch("http://localhost:3333/formdata", {
+        method: "POST",
+        body: form,
       })
-      output.textContent = entries.join("\n")
+      const text = await response.text()
+      output.textContent = text
     } catch (e) {
       output.textContent = `Error: ${e}`
     }
