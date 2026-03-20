@@ -2,6 +2,10 @@
 
 An anlternative way to get rid of CORS in Electron renderer process by exposing a `fetch` function backed by `electron.net.fetch`
 
+## Sponsor
+
+[ChatWise](https://chatwise.app?ref=electron-fetch) - All-in-one agentic chat app.
+
 ## Install
 
 Install as dev dependency, make sure your bundler would bundle it:
